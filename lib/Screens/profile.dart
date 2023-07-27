@@ -1,5 +1,10 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:water_monster/Screens/home.dart';
+import 'package:water_monster/Screens/login.dart';
+import 'package:water_monster/controller.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -11,6 +16,8 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
+    final oheight = MediaQuery.of(context).size.height;
+    final mwidth = MediaQuery.of(context).size.width;
     return Scaffold(
       //*AppBarForProfile
       appBar: AppBar(
@@ -42,7 +49,7 @@ class _ProfileState extends State<Profile> {
               height: 10, //!temp number till i make it flexsible
             ),
             Text(
-              'Example@gmail.com', //!temporary till i make controllers
+              email_txt.text, //!temporary till i make controllers
               style: GoogleFonts.nunito(
                 color: const Color.fromRGBO(40, 144, 255, 10),
                 fontSize: 20,
@@ -53,8 +60,9 @@ class _ProfileState extends State<Profile> {
               height: 10, //!temp number till i make it flexsible
             ),
             SizedBox(
-              width: 360, //!temp number till i make it flexsible
+              width: mwidth / 1.2, //!temp number till i make it flexsible
               child: TextField(
+                controller: name_txt,
                 decoration: InputDecoration(
                     hintText: 'Name',
                     hintStyle: GoogleFonts.nunito(
@@ -71,7 +79,7 @@ class _ProfileState extends State<Profile> {
               height: 10, //!temp number till i make it flexsible
             ),
             SizedBox(
-              width: 360,
+              width: mwidth / 1.2,
               child: TextField(
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
@@ -91,8 +99,8 @@ class _ProfileState extends State<Profile> {
             ),
             Row(
               children: <Widget>[
-                const SizedBox(
-                  width: 100, //!temp number till i make it flexsible
+                SizedBox(
+                  width: mwidth / 5, //!temp number till i make it flexsible
                 ),
                 IconButton(
                   onPressed: () {},
@@ -116,7 +124,14 @@ class _ProfileState extends State<Profile> {
             ),
             ElevatedButton.icon(
               icon: const Icon(Icons.logout),
-              onPressed: () {}, //!Temp till i make the login and signup form
+              onPressed: () {
+                // Navigator.canPop(context) ? Navigator.pop(context) : null;
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => const Login(),
+                    ),
+                    (route) => false);
+              }, //!Temp till i make the login and signup form
               style: ButtonStyle(
                 textStyle: MaterialStatePropertyAll(GoogleFonts.nunito(
                   fontSize: 15,
