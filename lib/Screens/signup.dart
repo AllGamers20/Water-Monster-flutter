@@ -1,9 +1,11 @@
 // ignore_for_file: file_names, void_checks, dead_code
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:validators/validators.dart';
 import 'package:water_monster/Screens/home.dart';
 import 'package:water_monster/Screens/login.dart';
@@ -32,6 +34,26 @@ class _SignUpState extends State<SignUp> {
   String? _name, _email, _password;
   List<String> items = ["Client", "Provider"];
   String? selecteditem = "Client";
+
+  Future<void> signinwithgoogle() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final GoogleSignInAccount? googleuser = await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleauth =
+        await googleuser!.authentication;
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleauth.accessToken,
+      idToken: googleauth.idToken,
+    );
+    final UserCredential userCredential =
+        await auth.signInWithCredential(credential);
+  }
+
+  Future<void> createAccount() async {
+    FirebaseAuth emailpasswordauth = FirebaseAuth.instance;
+    emailpasswordauth.createUserWithEmailAndPassword(
+        email: new_email_txt.text, password: new_password_txt.text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +125,7 @@ class _SignUpState extends State<SignUp> {
               SizedBox(
                 width: mwidth / 1.2, //!temp number till i make it flexsible
                 child: TextFormField(
-                  controller: email_txt,
+                  controller: new_email_txt,
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Please enter vaild email';
@@ -169,7 +191,7 @@ class _SignUpState extends State<SignUp> {
                 height: 30,
               ),
               SizedBox(
-                width: mwidth/1.2,
+                width: mwidth / 1.2,
                 child: DropDown_Btn(),
               ),
               const SizedBox(
@@ -179,6 +201,7 @@ class _SignUpState extends State<SignUp> {
                   onPressed: () {
                     if (formKey.currentState!.validate() &&
                         selecteditem == 'Provider') {
+                      createAccount();
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) {
                           return const Provider();
@@ -191,6 +214,7 @@ class _SignUpState extends State<SignUp> {
                     {
                       if (formKey.currentState!.validate() &&
                           selecteditem == 'Client') {
+                        createAccount();
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (context) {
                             return const Home();
@@ -261,8 +285,24 @@ class _SignUpState extends State<SignUp> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          print('Sign in with google');
+                        onTap: () async {
+                          await signinwithgoogle();
+                          if (selecteditem == 'Client') {
+                            Navigator.of(context)
+                                .pushReplacement(MaterialPageRoute(
+                              builder: (context) {
+                                return const Home();
+                              },
+                            ));
+                          }
+                          if (selecteditem == 'Provider') {
+                            Navigator.of(context)
+                                .pushReplacement(MaterialPageRoute(
+                              builder: (context) {
+                                return const Provider();
+                              },
+                            ));
+                          }
                         },
                         child: SvgPicture.asset(
                           'Assets/svg/google.svg',
