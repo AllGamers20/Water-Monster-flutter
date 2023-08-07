@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "574198788635",
+    "project_id": "water-monster-102e7",
+    "storage_bucket": "water-monster-102e7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574198788635:android:e2d06922c1e347dd3a3ebe",
+        "android_client_info": {
+          "package_name": "com.example.water_monster"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574198788635-58djf5utk85br85oqn3a7hunuihsg5nk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIOyxwSlfFcj4kS-X2aDpJ0ZQqUE5ONp8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574198788635-58djf5utk85br85oqn3a7hunuihsg5nk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

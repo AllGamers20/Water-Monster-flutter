@@ -1,7 +1,9 @@
 // ignore_for_file: file_names
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:water_monster/Screens/home.dart';
 import 'package:water_monster/Screens/login.dart';
 import 'package:water_monster/controller.dart';
@@ -14,6 +16,11 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  Future<void> logout() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    await googleSignIn.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     final oheight = MediaQuery.of(context).size.height;
@@ -49,7 +56,8 @@ class _ProfileState extends State<Profile> {
               height: 10, //!temp number till i make it flexsible
             ),
             Text(
-              email_txt.text, //!temporary till i make controllers
+              FirebaseAuth.instance.currentUser!
+                  .email!, //!temporary till i make controllers
               style: GoogleFonts.nunito(
                 color: const Color.fromRGBO(40, 144, 255, 10),
                 fontSize: 20,
@@ -124,8 +132,8 @@ class _ProfileState extends State<Profile> {
             ),
             ElevatedButton.icon(
               icon: const Icon(Icons.logout),
-              onPressed: () {
-                // Navigator.canPop(context) ? Navigator.pop(context) : null;
+              onPressed: () async {
+                await logout();
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                       builder: (context) => const Login(),

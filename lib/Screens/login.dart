@@ -1,9 +1,11 @@
 // ignore_for_file: file_names, use_build_context_synchronously
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:water_monster/Screens/Signup.dart';
 import 'package:water_monster/controller.dart';
@@ -32,6 +34,26 @@ class _LoginState extends State<Login> {
   // }
   final formKey = GlobalKey<FormState>();
   String? _name, _email, _password;
+
+  Future<void> signinwithgoogle() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final GoogleSignInAccount? googleuser = await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleauth =
+        await googleuser!.authentication;
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleauth.accessToken,
+      idToken: googleauth.idToken,
+    );
+    final UserCredential userCredential =
+        await auth.signInWithCredential(credential);
+  }
+
+  Future<void> emailpassword() async {
+    FirebaseAuth emailpasswordauth = FirebaseAuth.instance;
+    emailpasswordauth.signInWithEmailAndPassword(
+        email: email_txt.text, password: password_txt.text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +92,7 @@ class _LoginState extends State<Login> {
               SizedBox(
                 width: mwidth / 1.2, //!temp number till i make it flexsible
                 child: TextFormField(
+                  controller: email_txt,
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Please enter vaild email';
@@ -83,7 +106,6 @@ class _LoginState extends State<Login> {
                   onSaved: (newValue) {
                     _email = newValue!;
                   },
-                  controller: email_txt,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.email),
@@ -106,6 +128,7 @@ class _LoginState extends State<Login> {
               SizedBox(
                 width: mwidth / 1.2, //!temp number till i make it flexsible
                 child: TextFormField(
+                  controller: password_txt,
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'enter password';
@@ -115,7 +138,6 @@ class _LoginState extends State<Login> {
                     }
                     return null;
                   },
-                  controller: password_txt,
                   obscureText: true,
                   keyboardType: TextInputType.visiblePassword,
                   decoration: InputDecoration(
@@ -137,12 +159,10 @@ class _LoginState extends State<Login> {
                 height: 30,
               ),
               ElevatedButton.icon(
-                  onPressed: () async {
-                    final SharedPreferences sp =
-                        await SharedPreferences.getInstance();
-                    sp.setString('email', email_txt.text);
-
-                    if (formKey.currentState!.validate()) {
+                  onPressed: () {
+                    if (email_txt.text.isNotEmpty &&
+                        password_txt.text.length > 6) {
+                      emailpassword();
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) {
                           return const Home();
@@ -236,8 +256,16 @@ class _LoginState extends State<Login> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          print('Sign in with google');
+                        onTap: () async {
+                          await signinwithgoogle();
+                          if (mounted) {
+                            Navigator.of(context)
+                                .pushReplacement(MaterialPageRoute(
+                              builder: (context) {
+                                return const Home();
+                              },
+                            ));
+                          }
                         },
                         child: SvgPicture.asset(
                           'Assets/svg/google.svg',
